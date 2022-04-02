@@ -25,7 +25,7 @@ finetune/training costs, and easy setup. It is the StyleGAN of diffusion models.
 We plan to release a variety of pretrained models in the near future, but right
 now we have a 1.2 billion parameter classifier-free-guidance model [trained on yfcc 100m](https://paperswithcode.com/dataset/yfcc100m):
 
-[yfcc_cfg](https://the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt) (192 base channels, 4-4-8-8 resolution multipliers) - [Autoencoder](https://ommer-lab.com/files/latent-diffusion/kl-f8.zip) | [Autoencoder Config](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/configs/autoencoder/autoencoder_kl_32x32x4.yaml) | [Model Mirror](https://mystic.the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt)
+[yfcc_cfg](https://the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt) (ViT-B/16 CLOOB 16 epochs, 192 base channels, 4-4-8-8 resolution multipliers) - [CLOOB checkpoint](https://the-eye.eu/public/AI/models/cloob/cloob_laion_400m_vit_b_16_16_epochs-405a3c31572e0a38f8632fa0db704d0e4521ad663555479f86babd3d178b1892.pkl) | [Autoencoder](https://ommer-lab.com/files/latent-diffusion/kl-f8.zip) | [Autoencoder Config](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/configs/autoencoder/autoencoder_kl_32x32x4.yaml) | [Model Mirror](https://mystic.the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt)
 
 ## Training
 
