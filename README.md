@@ -1,6 +1,31 @@
+# CLOOB Conditioned Latent Diffusion: Convenient High Quality Diffusion Models
+
+## Introduction
+
+This repository contains the training code for CLOOB conditioned latent diffusion.
+CCLD is similar in approach to the CLIP conditioned diffusion [trained by
+Katherine Crowson](https://github.com/crowsonkb/v-diffusion-pytorch) with a few
+key differences:
+
+- The use of **latent diffusion** cuts training costs by something like a factor of
+ten, allowing a high quality 1.2 billion parameter model to converge in as few as 5 days
+on a single 8x A100 pod.
+
+- **CLOOB conditioning** can take advantage of CLOOB's unified latent space. CLOOB
+text and image embeds on the same inputs share a high similarity of somewhere around 0.9. **This
+makes it possible to train the model without captions** by using image embeds in the
+training loop and text embeds during inference.
+
+This combination of traits makes the CCLD training approach extremely attractive
+to hobbyists, academics, and newcomers due to its high quality results, low
+finetune/training costs, and easy setup. It is the StyleGAN of diffusion models. 
+
 ## Pretrained Models
 
-Coming soon!
+We plan to release a variety of pretrained models in the near future, but right
+now we have a 1.2 billion parameter classifier-free-guidance model [trained on yfcc 100m](https://paperswithcode.com/dataset/yfcc100m):
+
+[yfcc_cfg](https://the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt) (192 base channels, 4-4-8-8 resolution multipliers) - [Autoencoder](https://ommer-lab.com/files/latent-diffusion/kl-f8.zip) | [Autoencoder Config](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/configs/autoencoder/autoencoder_kl_32x32x4.yaml) | [Model Mirror](https://mystic.the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt)
 
 ## Training
 
