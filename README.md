@@ -121,7 +121,22 @@ constrained and would like to use a higher batch size in the early training. It
 also makes early training go faster if you're compute constrained or impatient.
 
 **Training Tip**: Once the loss converges it is often possible to get it down lower
-by restarting the run with a lower learning rate. 
+by restarting the run with a lower learning rate. You need to overwrite the learning
+rate in the checkpoint so it doesn't get overwritten when you resume. You can do that
+from a python prompt like so:
+
+```
+Python 3.8.10 (default, Nov 26 2021, 20:14:08) 
+[GCC 9.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import torch
+>>> ckpt = torch.load("jdp-latent-diffusion/1dv7xxrg/checkpoints/epoch=1-step=149999.ckpt")
+>>> ckpt['optimizer_states'][0]['param_groups'][0]['lr']
+3e-05
+>>> ckpt['optimizer_states'][0]['param_groups'][0]['lr'] = 3e-06
+>>> torch.save(ckpt, "yfcc_resume.ckpt")
+>>>
+```
 
 ### Finetuning
 
