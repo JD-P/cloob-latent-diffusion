@@ -27,9 +27,7 @@ now we have a 1.2 billion parameter classifier-free-guidance model [trained on y
 
 [yfcc_cfg](https://the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt) (ViT-B/16 CLOOB 16 epochs, 192 base channels, 4-4-8-8 resolution multipliers) - [CLOOB checkpoint](https://the-eye.eu/public/AI/models/cloob/cloob_laion_400m_vit_b_16_16_epochs-405a3c31572e0a38f8632fa0db704d0e4521ad663555479f86babd3d178b1892.pkl) | [Autoencoder](https://ommer-lab.com/files/latent-diffusion/kl-f8.zip) | [Autoencoder Config](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/configs/autoencoder/autoencoder_kl_32x32x4.yaml) | [Model Mirror](https://mystic.the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt)
 
-## Training
-
-### Training setup
+## Setup
 
 First recursively git clone this repo to get it and its submodules:
 
@@ -44,7 +42,15 @@ Then pip install our other dependencies:
 
 `pip3 install omegaconf pillow pytorch-lightning einops wandb ftfy regex pycocotools ./CLIP`
 
-You are now ready to prepare your training run.
+You are now ready to sample or prepare your training run.
+
+## Sampling
+
+It is possible to sample from a model like so:
+
+```rm -f out*.png; ./cfg_sample.py "A photorealist detailed snarling goblin" --autoencoder kl_f8 --checkpoint yfcc-latent-diffusion-f8-e2-s250k.ckpt -n 128 --seed 4485 && v-diffusion-pytorch/make_grid.py out_*.png```
+
+## Training
 
 ### Preparing The Dataset
 
@@ -105,7 +111,11 @@ In order to train latent diffusion you need a latent space to train in. The
 architecture of the training code is set up for an f=8 KL autoencoder. You can
 [get a photorealistic autoencoder here](https://ommer-lab.com/files/latent-diffusion/kl-f8.zip)
 among with others in the [CompVis latent diffusion repo](https://github.com/CompVis/latent-diffusion).
-You will also need [the configuration file for it](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/configs/autoencoder/autoencoder_kl_32x32x4.yaml).
+You will also need [the configuration file for it](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/configs/autoencoder/autoencoder_kl_32x32x4.yaml)
+which can be found in the latent-diffusion repo recursively cloned along with cloob-latent-diffusion.
+It should have the same name as your autoencoder with the file extension changed. For example:
+
+`cp latent-diffusion/configs/autoencoder/autoencoder_kl_32x32x4.yaml ./2022_04_04_wikiart_kl_f8.yaml`
 
 If you're not training on a photorealistic dataset, you will either need to find an
 appropriate pretrained KL autoencoder or train your own. [The training repo for
@@ -126,7 +136,7 @@ to work, our experiments with higher dimensional autoencoders did not work well.
 Once you have the setup, training set, autoencoder, demo prompts, and wandb project ready
 starting the training run is as simple as:
 
-`python3 yfcc_latent_diffusion.py --train-set train_paths.txt --vqgan-model kl_f8 --demo-prompts coco_demo_prompts.txt --wandb-project jdp-latent-diffusion`
+`python3 train_latent_diffusion.py --train-set train_paths.txt --vqgan-model kl_f8 --demo-prompts coco_demo_prompts.txt --wandb-project jdp-latent-diffusion`
 
 For the YFCC CLOOB conditioned latent diffusion training took about five and a
 half days to reach the 250k checkpoint with a base channel count of 192 and
@@ -135,6 +145,17 @@ following links:
 
 [0-150k step training run](https://wandb.ai/jdp/jdp-latent-diffusion/runs/1dv7xxrg?workspace=user-jdp)
 [150k-250k step training run](https://wandb.ai/jdp/jdp-latent-diffusion/runs/258cmlpw?workspace=user-jdp)
+
+**Training Tip**: Your model is likely to overfit/memorize the training set if
+it's too big in relation to your dataset size. The rule of thumb for overfitting
+is the parameter count shouldn't be more than 2/3 the datapoints in the set. You
+can calculate datapoints (floats) from the size of your latents times the size of
+your dataset. For the f=8 kl autoencoder used by this training repo it's
+32x32x4xDataSetSize. So for example WikiArt which has 80k training items should
+be trained on a model no more than 0.66 * 32 * 32 * 4 * 80000 parameters large,
+or 216.2688 million. You should pick your base channel count and channel
+multipliers to respect this rule. Base channel count must be a multiple of 64
+for this architecture.
 
 **Training Tip**: The loss curve has a small scale past the initial warmup, if it
 seems to be stuck in the same loss regime this doesn't necessarily mean it isn't
