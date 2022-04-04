@@ -144,6 +144,7 @@ channel multipliers of 4,4,8,8. You can analyze the logs from these runs at the
 following links:
 
 [0-150k step training run](https://wandb.ai/jdp/jdp-latent-diffusion/runs/1dv7xxrg?workspace=user-jdp)
+
 [150k-250k step training run](https://wandb.ai/jdp/jdp-latent-diffusion/runs/258cmlpw?workspace=user-jdp)
 
 **Training Tip**: Your model is likely to overfit/memorize the training set if
