@@ -335,30 +335,15 @@ class ToMode:
 
 
 class LightningDiffusion(pl.LightningModule):
-    def __init__(self, cloob_checkpoint, vqgan_model, train_dl, ae_model, autoencoder_scale,
+    def __init__(self, cloob_checkpoint, vqgan_model, train_dl, autoencoder_scale,
                  base_channels=128, channel_multipliers="4,4,8,8", ema_decay_at=200000):
         super().__init__()
-        """
+
         # autoencoder
         ae_config = OmegaConf.load(vqgan_model + '.yaml')
         self.ae_model = ldm.models.autoencoder.AutoencoderKL(**ae_config.model.params)
-        # ae_model = ldm.models.autoencoder.VQModel(**ae_config.model.params)
         self.ae_model.eval().requires_grad_(False)
         self.ae_model.init_from_ckpt(vqgan_model + '.ckpt')
-
-        # autoencoder scale
-        print("Getting autoencoder scale for {}.ckpt".format(vqgan_model))
-        self.scale_factor = 1
-        var_accum = 0.
-        dl_iter = iter(train_dl)
-        for i in trange(32):
-            batch = next(dl_iter)
-            reals, _ = batch
-            reals = self.encode(reals * 2 - 1)
-            var_accum += reals.var().item()
-        """
-        # autoencoder
-        self.ae_model = ae_model
         self.register_buffer('scale_factor', autoencoder_scale)
 
         # CLOOB
@@ -366,7 +351,7 @@ class LightningDiffusion(pl.LightningModule):
         self.cloob = model_pt.get_pt_model(cloob_config)
         checkpoint = pretrained.download_checkpoint(cloob_config)
         self.cloob.load_state_dict(model_pt.get_pt_params(cloob_config, checkpoint))
-        self.cloob.eval().requires_grad_(False).to('cuda')
+        self.cloob.eval().requires_grad_(False)
 
         # Diffusion model
         self.model = DiffusionModel(base_channels,
@@ -484,7 +469,6 @@ class ExceptionCallback(pl.Callback):
 def worker_init_fn(worker_id):
     random.seed(torch.initial_seed())
 
-
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--cloob-checkpoint", type=str,
@@ -492,6 +476,9 @@ def main():
                    help="the CLOOB to condition with")
     p.add_argument("--vqgan-model", type=str, required=True,
                    help="the VQGAN checkpoint")
+    p.add_argument("--autoencoder-scale",
+                   type=lambda x: torch.tensor(float(x)), required=True,
+                   help="the VQGAN autoencoder scale")
     p.add_argument('--train-set', type=Path, required=True,
                    help='path to the text file containing your training paths')
     p.add_argument('--checkpoint-every', type=int, default=50000,
@@ -562,29 +549,9 @@ def main():
 
     demo_prompts = Path(args.demo_prompts).read_text().strip().split('\n')
     demo_prompts = tok_wrap(demo_prompts)
-
-
-    # We need to get the autoencoder scale outside the init of LightningDiffusion
-    # because it runs on CPU
-    ae_config = OmegaConf.load(args.vqgan_model + '.yaml')
-    ae_model = ldm.models.autoencoder.AutoencoderKL(**ae_config.model.params)
-    ae_model.eval().requires_grad_(False).to("cuda:0")
-    ae_model.init_from_ckpt(args.vqgan_model + '.ckpt')
-
-    # autoencoder scale
-    print("Getting autoencoder scale for {}.ckpt".format(args.vqgan_model))
-    var_accum = 0.
-    dl_iter = iter(train_dl)
-    for i in trange(32):
-        batch = next(dl_iter)
-        reals, _ = batch
-        reals = reals.to("cuda:0")
-        reals = ae_model.encode(reals).sample() * 2 - 1
-        var_accum += reals.var().item()
-    autoencoder_scale = torch.tensor(var_accum ** 0.5)
         
     model = LightningDiffusion(args.cloob_checkpoint, args.vqgan_model, train_dl,
-                               ae_model, autoencoder_scale,
+                               args.autoencoder_scale,
                                args.base_channels, args.channel_multipliers, args.ema_decay_at)
 
     wandb_logger = pl.loggers.WandbLogger(project=args.wandb_project)
