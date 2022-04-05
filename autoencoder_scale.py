@@ -92,5 +92,5 @@ for i in trange(32):
     reals = reals.to("cuda:0")
     reals = ae_model.encode(reals).sample() * 2 - 1
     var_accum += reals.var().item()
-autoencoder_scale = torch.tensor(var_accum ** 0.5)
+autoencoder_scale = torch.tensor((var_accum / 32) ** 0.5)
 print(autoencoder_scale)
