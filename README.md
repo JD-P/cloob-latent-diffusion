@@ -117,6 +117,15 @@ It should have the same name as your autoencoder with the file extension changed
 
 `cp latent-diffusion/configs/autoencoder/autoencoder_kl_32x32x4.yaml ./2022_04_04_wikiart_kl_f8.yaml`
 
+Before training you must get the scale for your autoencoder like so:
+
+`python3 autoencoder_scale.py 2022_04_04_wikiart_kl_f8 train.txt`
+
+Write down the number you obtain from this and use it in your training run, this
+same number must be used in inference for the model to work. The model checkpoint
+retains a copy of the autoencoder scale but it's best to keep your own record of it
+in your lab notes.
+
 If you're not training on a photorealistic dataset, you will either need to find an
 appropriate pretrained KL autoencoder or train your own. [The training repo for
 these models](https://github.com/CompVis/latent-diffusion) is unfortunately pretty
@@ -136,7 +145,7 @@ to work, our experiments with higher dimensional autoencoders did not work well.
 Once you have the setup, training set, autoencoder, demo prompts, and wandb project ready
 starting the training run is as simple as:
 
-`python3 train_latent_diffusion.py --train-set train_paths.txt --vqgan-model kl_f8 --demo-prompts coco_demo_prompts.txt --wandb-project jdp-latent-diffusion`
+`python3 train_latent_diffusion.py --train-set train.txt --vqgan-model kl_f8 --autoencoder-scale 109.8183 --demo-prompts demo_prompts.txt --wandb-project jdp-latent-diffusion --batch-size 128 --num-gpus 8`
 
 For the YFCC CLOOB conditioned latent diffusion training took about five and a
 half days to reach the 250k checkpoint with a base channel count of 192 and
@@ -192,7 +201,7 @@ dataset rather than starting from scratch. This is called finetuning a model. If
 you would like to finetune an existing model this is easily accomplished using
 the `--resume-from` flag:
 
-`python3 train_latent_diffusion.py --train-set train_paths.txt --vqgan-model kl_f8 --demo-prompts coco_demo_prompts.txt --resume-from to_finetune.ckpt --wandb-project jdp-latent-diffusion`
+`python3 train_latent_diffusion.py --train-set train_paths.txt --vqgan-model kl_f8 --autoencoder-scale 109.8183 --demo-prompts coco_demo_prompts.txt --resume-from to_finetune.ckpt --wandb-project jdp-latent-diffusion`
 
 **Training Tip**: As a rule of thumb, finetunes tend to take 10-20% of the resources
 that the original training run did in compute time.
