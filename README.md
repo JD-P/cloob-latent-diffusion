@@ -32,7 +32,7 @@ train your latent diffusion model on top of if you can't train your own.
 LAION 5b contains a wide variety of images and should therefore have textures
 for your dataset in its distribution:
 
-[LAION 5b Autoencoder](https://the-eye.eu/public/AI/cah/laion-400m-kl-f8.ckpt) (autoencoder scale 8.0779) - [Config](https://the-eye.eu/public/AI/cah/laion-400m-kl-f8.yaml)
+[LAION 5b Autoencoder](https://the-eye.eu/public/AI/cah/laion-5B-kl-f8.ckpt) (autoencoder scale 8.0779) - [Config](https://the-eye.eu/public/AI/cah/laion-5B-kl-f8.yaml)
 
 ## Setup
 
