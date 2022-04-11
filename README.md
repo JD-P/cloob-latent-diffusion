@@ -161,7 +161,7 @@ to work, our experiments with higher dimensional autoencoders did not work well.
 Once you have the setup, training set, autoencoder, demo prompts, and wandb project ready
 starting the training run is as simple as:
 
-`python3 train_latent_diffusion.py --train-set train.txt --vqgan-model kl_f8 --autoencoder-scale 109.8183 --demo-prompts demo_prompts.txt --wandb-project jdp-latent-diffusion --batch-size 128 --num-gpus 8`
+`python3 train_latent_diffusion.py --train-set train.txt --vqgan-model kl_f8 --autoencoder-scale 8.0779 --demo-prompts demo_prompts.txt --wandb-project jdp-latent-diffusion --batch-size 128 --num-gpus 8`
 
 For the YFCC CLOOB conditioned latent diffusion training took about five and a
 half days to reach the 250k checkpoint with a base channel count of 192 and
@@ -217,7 +217,7 @@ dataset rather than starting from scratch. This is called finetuning a model. If
 you would like to finetune an existing model this is easily accomplished using
 the `--resume-from` flag:
 
-`python3 train_latent_diffusion.py --train-set train_paths.txt --vqgan-model kl_f8 --autoencoder-scale 109.8183 --demo-prompts coco_demo_prompts.txt --resume-from to_finetune.ckpt --wandb-project jdp-latent-diffusion`
+`python3 train_latent_diffusion.py --train-set train_paths.txt --vqgan-model kl_f8 --autoencoder-scale 8.0779 --demo-prompts coco_demo_prompts.txt --resume-from to_finetune.ckpt --wandb-project jdp-latent-diffusion`
 
 **Training Tip**: As a rule of thumb, finetunes tend to take 10-20% of the resources
 that the original training run did in compute time.
