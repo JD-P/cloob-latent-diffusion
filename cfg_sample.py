@@ -56,10 +56,19 @@ def main():
                    help='the image prompts to use')
     # p.add_argument('--batch-size', '-bs', type=int, default=1,
     #                help='the number of images per batch')
+    p.add_argument('--cloob-checkpoint', type=str,
+                   default='cloob_laion_400m_vit_b_16_16_epochs',
+                   help='the cloob checkpoint to use with the diffusion model')
     p.add_argument('--autoencoder', type=str,
                    help='the autoencoder to use, e.g. "model" for model[.ckpt] and model[.yaml]')
     p.add_argument('--checkpoint', type=str,
                    help='the checkpoint to use')
+    p.add_argument('--base-channels', type=int, default=192,
+                   help='the base channel count (width) for the model')
+    p.add_argument('--channel-multipliers',
+                   type=lambda x: [int(i) for i in x.strip().split(",")],
+                   default=[4,4,8,8],
+                   help='comma separated multiplier constants for the four model resolutions')
     p.add_argument('--cond-scale', type=float, default=3.,
                    help='the conditioning scale')
     p.add_argument('--device', type=str,
@@ -91,11 +100,12 @@ def main():
     ae_model.init_from_ckpt(args.autoencoder + '.ckpt')
     n_ch, side_y, side_x = 4, 32, 32
     checkpoint = args.checkpoint
-    model = train.DiffusionModel(192, [4,4,8,8], autoencoder_scale=torch.tensor(2.55))
+    model = train.DiffusionModel(args.base_channels, args.channel_multipliers,
+                                 autoencoder_scale=torch.tensor(2.55))
     model.load_state_dict(torch.load(checkpoint, map_location='cpu'))
     model = model.to(device).eval().requires_grad_(False)
 
-    cloob_config = pretrained.get_config('cloob_laion_400m_vit_b_16_16_epochs')
+    cloob_config = pretrained.get_config(args.cloob_checkpoint)
     cloob = model_pt.get_pt_model(cloob_config)
     checkpoint = pretrained.download_checkpoint(cloob_config)
     cloob.load_state_dict(model_pt.get_pt_params(cloob_config, checkpoint))
