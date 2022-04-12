@@ -429,7 +429,7 @@ class DemoCallback(pl.Callback):
     @rank_zero_only
     @torch.no_grad()
     def on_batch_end(self, trainer, module):
-        if trainer.global_step % self.demo_every != 0:
+        if (trainer.global_step - 1) % self.demo_every != 0:
             return
 
         lines = [f'({i // 4}, {i % 4}) {line}' for i, line in enumerate(self.prompts)]
