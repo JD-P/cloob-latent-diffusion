@@ -27,7 +27,7 @@ now there is a 1.2 billion parameter classifier-free-guidance model [trained on 
 
 [yfcc_cfg](https://the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt) (ViT-B/16 CLOOB 16 epochs, 192 base channels, 4-4-8-8 resolution multipliers) - [CLOOB checkpoint](https://the-eye.eu/public/AI/models/cloob/cloob_laion_400m_vit_b_16_16_epochs-405a3c31572e0a38f8632fa0db704d0e4521ad663555479f86babd3d178b1892.pkl) | [Autoencoder](https://ommer-lab.com/files/latent-diffusion/kl-f8.zip) | [Autoencoder Config](https://raw.githubusercontent.com/CompVis/latent-diffusion/main/configs/autoencoder/autoencoder_kl_32x32x4.yaml) | [Model Mirror](https://mystic.the-eye.eu/public/AI/models/yfcc-latent-diffusion-f8-e2-s250k.ckpt)
 
-[Danbooru (COMING SOON)] (ViT-B/16 CLOOB 32 epochs, 128 base channels, 4-4-8-8 resolution multipliers)
+[danbooru_cfg](https://the-eye.eu/public/AI/models/danbooru-latent-diffusion-e88.ckpt) (ViT-B/16 CLOOB 32 epochs, 128 base channels, 4-4-8-8 resolution multipliers)
 
 And a stage one LAION 5b autoencoder which makes a good general base to
 train your latent diffusion model on top of if you can't train your own.
@@ -36,7 +36,7 @@ for your dataset in its distribution:
 
 [LAION 5b Autoencoder](https://the-eye.eu/public/AI/cah/laion-5B-kl-f8.ckpt) (autoencoder scale 8.0779) - [Config](https://the-eye.eu/public/AI/cah/laion-5B-kl-f8.yaml)
 
-[Danbooru Autoencoder (COMING SOON)] (autoencoder scale 9.3154)
+[Danbooru Autoencoder](https://the-eye.eu/public/AI/models/danbooru-kl-f8.ckpt) (autoencoder scale 9.3154) - [Config](https://the-eye.eu/public/AI/models/danbooru-kl-f8.yaml)
 
 ## Setup
 
@@ -63,7 +63,7 @@ It is possible to sample from a model like so:
 
 Or in the case of something like the danbooru latent diffusion model:
 
-```rm -f out*.png; ./cfg_sample.py "anime portrait of a man in a flight jacket leaning against a biplane" --autoencoder danbooru-kl-f8 --checkpoint danbooru-latent-diffusion-e88.ckpt --base-channels 128 --channel-multipliers 4,4,8,8 -n 16 --seed 4485 && v-diffusion-pytorch/make_grid.py out_*.png```
+```rm -f out*.png; ./cfg_sample.py "anime portrait of a man in a flight jacket leaning against a biplane" --autoencoder danbooru-kl-f8 --checkpoint danbooru-latent-diffusion-e88.ckpt --cloob-checkpoint cloob_laion_400m_vit_b_16_32_epochs --base-channels 128 --channel-multipliers 4,4,8,8 -n 16 --seed 4485 && v-diffusion-pytorch/make_grid.py out_*.png```
 
 
 ## Training
