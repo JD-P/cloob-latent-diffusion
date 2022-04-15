@@ -36,6 +36,9 @@ for your dataset in its distribution:
 
 [LAION 5b Autoencoder](https://the-eye.eu/public/AI/cah/laion-5B-kl-f8.ckpt) (autoencoder scale 8.0779) - [Config](https://the-eye.eu/public/AI/cah/laion-5B-kl-f8.yaml)
 
+**Note**: The LAION 5b autoencoder was not trained on all of LAION 5b, but the
+laion2b-en and laion1b-nolang subsets.
+
 [Danbooru Autoencoder](https://the-eye.eu/public/AI/models/danbooru-kl-f8.ckpt) (autoencoder scale 9.3154) - [Config](https://the-eye.eu/public/AI/models/danbooru-kl-f8.yaml)
 
 ## Setup
